@@ -1,0 +1,21 @@
+[build]
+command = "cd client && npm install && npm run build && cd ../server && npm install && npm run build"
+functions = "server/functions"
+publish = "client/build"
+
+# This redirect rule specifies that every path successfully resolves to index.html 
+# and the client has full control over the routing logic.
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+# This redirect rule specifies that every  /graphql path resolves to /.netlify/functions/graphql
+[[redirects]]
+from = "/graphql"
+to = "/.netlify/functions/graphql"
+status = 200
+
+
+
+

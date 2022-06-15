@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "docker-dev": "docker-compose -f docker-compose-dev.yml up --build",
+    "docker-dev-silent": "docker-compose -f docker-compose-dev.yml up -d --build",
+    "docker-dev-kill": "docker-compose -f docker-compose-dev.yml down",
+    "docker-test-prod": "docker-compose -f docker-compose-test-prod.yml up --build",
+    "docker-test-prod-silent": "docker-compose -f docker-compose-test-prod.yml up -d --build",
+    "docker-test-prod-kill": "docker-compose -f docker-compose-test-prod.yml down",
+    "docker-live-prod": "docker-compose up --build",
+    "docker-live-prod-silent": "docker-compose up -d --build",
+    "docker-live-prod-kill": "docker-compose down"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  }
+}

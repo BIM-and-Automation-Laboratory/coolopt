@@ -1,0 +1,58 @@
+version: "3"
+services:
+  db_test_prod:
+    build: ./docker-deploy/neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
+    networks: 
+      - prod-network
+  
+  api_test_prod:
+    build: 
+      context: .
+      dockerfile: ./docker-deploy/server/test-production/Dockerfile
+    ports:
+      - 5000:5000
+    environment: 
+      - DOCKER_NEO4J_URI=bolt://db_test_prod:7687 #dev
+      - DOCKER_NEO4J_USER=neo4j #dev
+      - DOCKER_NEO4J_PASSWORD=letmein #dev
+    env_file:
+      - ./server/.env
+    links:
+      - db_test_prod
+    depends_on:
+      - db_test_prod
+    networks: 
+      - prod-network
+
+  ui_test_prod:
+    build:
+      context: .
+      dockerfile: ./docker-deploy/client-nginx/test-production/Dockerfile
+      args: 
+        - REACT_APP_GRAPHQL_URI=/graphql
+        - REACT_APP_AUTH0_DOMAIN=dev-6--trv0x.us.auth0.com
+        - REACT_APP_AUTH0_CLIENT_ID=ZjST2uOpjjWgxTgkrO5Vmkf6WbeUJvuT
+        - REACT_APP_AUTH0_AUDIENCE=https://welearned.io
+        - REACT_APP_AUTH0_ROLES_NAMESPACE=http://welearned.io/roles
+    ports:
+      - "3000:80"
+    volumes: 
+      - ./docker-deploy/client-nginx/test-production:/etc/nginx/conf.d
+    links:
+      - api_test_prod
+    depends_on:
+      - api_test_prod
+    networks: 
+      - prod-network
+
+networks: 
+  prod-network:
+    driver: bridge

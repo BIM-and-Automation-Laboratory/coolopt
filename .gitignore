@@ -1,0 +1,10 @@
+.vscode
+**/.env
+/node_modules
+.history
+welearned-7f4e65b5433c.json
+# Local Netlify folder
+.netlify
+certbot
+uploads
+__pycache__/

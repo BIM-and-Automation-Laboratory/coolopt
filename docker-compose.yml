@@ -1,0 +1,73 @@
+# has only container configs that are applicable to prod environment
+version: "3"
+services:
+  db_live_prod:
+    build: ./docker-deploy/neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
+    networks: 
+      - prod-network
+  
+  api_live_prod:
+    build: 
+      context: .
+      dockerfile: ./docker-deploy/server/live-production/Dockerfile
+    ports:
+      - 5000:5000
+    environment: 
+      - DOCKER_NEO4J_URI=bolt://db_live_prod:7687 #dev
+      - DOCKER_NEO4J_USER=neo4j #dev
+      - DOCKER_NEO4J_PASSWORD=letmein #dev
+    env_file:
+      - ./server/.env
+    links:
+      - db_live_prod
+    depends_on:
+      - db_live_prod
+    networks: 
+      - prod-network
+
+  ui_live_prod:
+    build:
+      context: .
+      dockerfile: ./docker-deploy/client-nginx/live-production/Dockerfile
+      args: 
+        - REACT_APP_GRAPHQL_URI=/graphql
+        - REACT_APP_AUTH0_DOMAIN=tenant.auth0.com
+        - REACT_APP_AUTH0_CLIENT_ID=clientIDNumber
+        - REACT_APP_AUTH0_AUDIENCE=https://audience.io
+        - REACT_APP_AUTH0_ROLES_NAMESPACE=http://audience.io/roles
+    ports:
+      - 80:80
+      - 443:443
+    volumes: 
+      - ./docker-deploy/client-nginx/live-production:/etc/nginx/conf.d
+      - ./docker-deploy/client-nginx/live-production/dhparam:/etc/nginx/dhparam
+      - ./docker-deploy/client-nginx/live-production/certbot/conf:/etc/nginx/ssl
+      - ./docker-deploy/client-nginx/live-production/certbot/data:/usr/share/nginx/html/letsencrypt
+    links:
+      - api_live_prod
+    depends_on:
+      - api_live_prod
+    networks: 
+      - prod-network
+  
+  certbot:
+    image: certbot/certbot
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email luwembamugumya@gmail.com --agree-tos --no-eff-email --staging --force-renewal -d www.domain.co
+    volumes:
+      - ./docker-deploy/client-nginx/live-production/certbot/conf:/etc/letsencrypt
+      - ./docker-deploy/client-nginx/live-production/certbot/data:/usr/share/nginx/html/letsencrypt
+      - ./docker-deploy/client-nginx/live-production/certbot/logs:/var/log/letsencrypt
+    depends_on:
+      - ui_live_prod
+
+networks: 
+  prod-network:
+    driver: bridge

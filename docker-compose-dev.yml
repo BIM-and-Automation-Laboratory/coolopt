@@ -1,0 +1,69 @@
+# has only container configs that are applicable to prod environment
+version: "3"
+services:
+  db_dev:
+    build: ./docker-deploy/neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
+    networks: 
+      - dev-network
+
+  api_dev:
+    build: 
+      context: .
+      dockerfile: ./docker-deploy/server/development/Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment: 
+      - DOCKER_NEO4J_URI=bolt://db_dev:7687 #dev
+      - DOCKER_NEO4J_USER=neo4j #dev
+      - DOCKER_NEO4J_PASSWORD=letmein #dev
+    env_file:
+      - ./server/.env
+    links:
+      - db_dev
+    depends_on:
+      - db_dev
+    networks: 
+      - dev-network
+  
+  ui_dev:
+    build:
+      context: .
+      dockerfile: ./docker-deploy/client-nginx/development/Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./client/src:/app/src 
+    environment: 
+      - DOCKER_GQL_PROXY=http://api_dev:5000
+    env_file:
+      - ./client/.env
+    links:
+      - api_dev
+    depends_on:
+      - api_dev
+    networks: 
+      - dev-network
+  
+  nginx_dev: 
+    image: nginx:1.19-alpine
+    volumes: 
+      - ./docker-deploy/client-nginx/development:/etc/nginx/conf.d
+    ports: 
+      - 3000:80
+    depends_on: 
+      - api_dev
+      - ui_dev
+    networks: 
+      - dev-network
+
+networks: 
+  dev-network:
+    driver: bridge

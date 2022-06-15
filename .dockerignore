@@ -1,0 +1,7 @@
+.env
+**/modules
+Dockerfile
+.git
+.gitignore
+.dockerignore
+debug.log
