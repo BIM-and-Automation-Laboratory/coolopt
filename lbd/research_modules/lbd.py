@@ -1,12 +1,27 @@
+import sys
 # for working with rdf in python
 from rdflib import Graph , Literal , BNode , Namespace , RDF , RDFS , OWL , XSD, URIRef
+# Serializing query result as JSON
+from rdflib.plugins.sparql.results.jsonresults import JSONResultSerializer
 # progress bars
 from tqdm.autonotebook import tqdm
 from colorama import Fore, Back, Style
 
+# import ampligraph
+# import numpy as np
+# import pandas as pd
+# import tensorflow as tf # v1.13.2 is stable with py 3.6.0
+# from ampligraph.datasets import load_from_rdf
+# from ampligraph.latent_features import TransE, ComplEx, HolE, DistMult, ConvE, ConvKB
+# from ampligraph.evaluation import train_test_split_no_unseen, evaluate_performance, mr_score, mrr_score, hits_at_n_score
+# from ampligraph.discovery import query_topn, discover_facts, find_clusters
+# from ampligraph.utils import save_model, restore_model
+
 class LBD():
-    def __init__(self, workbook):
+    def __init__(self, workbook="", lbd_graph="", query=""):
         self.workbook = workbook
+        self.lbd_graph = lbd_graph
+        self.query = query
     
     def injector(self):
         # ####################################################
@@ -926,4 +941,57 @@ class LBD():
             # Mechanical Equipment
         return g
 
-        
+    def ask(self):
+        graph = Graph()
+        graph.parse(self.lbd_graph)
+
+        print(Fore.BLUE + "⚡ Query is running...")
+        result = graph.query(self.query)
+
+        JSONResultSerializer(result).serialize(sys.stdout)
+
+
+        return result
+
+    # def model(self): 
+
+    #     # LOADING THE DATASET
+    #     dataset = load_from_rdf("cobie_lbds", "cobie.ttl", rdf_format ="ttl", data_home="../lbd", add_reciprocal_rels=False)
+
+    #     # get the validation set
+    #     test_train, X_valid = train_test_split_no_unseen(dataset, 60, seed=0)
+
+    #     # get the test set from the remaining triples
+    #     X_train, X_test = train_test_split_no_unseen(test_train, 10, seed=0)
+
+    #     print('Total triples:', dataset.shape)
+    #     print('Size of train:', X_train.shape)
+    #     print('Size of valid:', X_valid.shape)
+    #     print('Size of test:', X_test.shape)
+
+    #     # PREPARING THE MODEL FOR TRAINING
+    #     model = TransE(k=150,                                                             # embedding size
+    #            epochs=100,                                                        # Num of epochs
+    #            batches_count= 10,                                                 # Number of batches 
+    #            eta=1,                                                             # number of corruptions to generate during training
+    #            loss='pairwise', loss_params={'margin': 1},                        # loss type and it's hyperparameters         
+    #            initializer='xavier', initializer_params={'uniform': False},       # initializer type and it's hyperparameters
+    #            regularizer='LP', regularizer_params= {'lambda': 0.001, 'p': 3},   # regularizer along with its hyperparameters
+    #            optimizer= 'adam', optimizer_params= {'lr': 0.001},                # optimizer to use along with its hyperparameters
+    #            seed= 0, verbose=True)
+
+    #     model.fit(X_train)
+
+    #     # TRAINED MODEL
+    #     save_model(model, 'TransE-small.pkl')
+
+    #     # EVALUATING TRAINED MODELS
+    #     test_triple = ['https://coolopt.io/BlockB-Abox#15d6dcc3-47be-493f-9696-4c020047ef78-000b7e99-temp',
+    #     'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+    #     'https://w3id.org/bot#Space']
+
+    #     triple_score = model.predict(test_triple)
+
+    #     print('Triple of interest:\n', test_triple)
+    #     print('Triple Score:\n', triple_score)
+                

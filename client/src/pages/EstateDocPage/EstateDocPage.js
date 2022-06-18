@@ -121,39 +121,13 @@ export default function EstateDocPage() {
             <p style={{ fontSize: "16px", fontWeight: 800 }}>COBie Files</p>
           </div>
 
-          <p style={{ fontSize: "14px", color: "grey" }}>
-            COBie helps organisations to electronically capture and record
-            important project data at the point of origin, including equipment
-            lists, product data sheets, warranties, spare parts lists, and
-            preventive maintenance schedules. This information is essential to
-            support operations, maintenance and asset management once the built
-            asset is in service, replacing reliance on uncoordinated, often
-            paper-based, handover information typically created by people who
-            did not participate in the project and delivered many months after
-            the client has taken occupancy of the building.
-          </p>
-          <p style={{ fontSize: "16px", fontWeight: 800, marginTop: "20px" }}>
-            Upload a COBie file (.xls files less than 50MBs only)
-          </p>
+          <p style={{ fontSize: "14px", color: "grey" }}>Convert a COBie file into a Linked Building Data Knowledge Graph</p>
+          <p style={{ fontSize: "16px", fontWeight: 800, marginTop: "20px" }}>Upload a COBie file (.xls files less than 50MBs only)</p>
           <div style={{ maxWidth: "500px" }}>
-            <Upload
-              maxSize="50000000"
-              accept=".xls"
-              handleAddFilesToStage={handleAddFilesToStage}
-            />
-            <StagedFileList
-              stagedFilesForUpload={files}
-              handleRemoveFileFromStage={handleRemoveFileFromStage}
-            />
+            <Upload maxSize="50000000" accept=".xls" handleAddFilesToStage={handleAddFilesToStage} />
+            <StagedFileList stagedFilesForUpload={files} handleRemoveFileFromStage={handleRemoveFileFromStage} />
             {files.length > 0 && (
-              <Button
-                className={
-                  uploadFileLoading
-                    ? classes.addFilesBtnLoading
-                    : classes.addFilesBtn
-                }
-                onClick={handleSubmitFiles}
-              >
+              <Button className={uploadFileLoading ? classes.addFilesBtnLoading : classes.addFilesBtn} onClick={handleSubmitFiles}>
                 Submit file
               </Button>
             )}

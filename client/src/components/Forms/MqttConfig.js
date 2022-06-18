@@ -1,29 +1,7 @@
-import {
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-  InputBase,
-  Button,
-  Card,
-} from "@material-ui/core";
+import { Grid, makeStyles, InputBase, Card } from "@material-ui/core";
 import React from "react";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import RemoveIcon from "@material-ui/icons/Remove";
-import EditIcon from "@material-ui/icons/Edit";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { useShadeInputBaseStyles } from "@mui-treasury/styles/inputBase/shade";
 import styles from "./styles";
-import SplitButton from "../DropdownButton/DropdownButton";
-import Toggle from "../Toggle/Toggle";
-import Upload from "../FileUpload/Upload";
-import StagedFileList from "../FileUpload/StagedFileList";
-import { GoSettings } from "react-icons/go";
-import { BsInfoSquareFill } from "react-icons/bs";
 import { IoIosFingerPrint } from "react-icons/io";
 import { BiServer } from "react-icons/bi";
 

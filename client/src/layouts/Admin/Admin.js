@@ -67,7 +67,7 @@ export default function Admin({ ...rest }) {
         <Redirect from="/admin" to="/admin/getting-started" />
       ) : (
         // if user has profile, do normal redirect
-        <Redirect from="/admin" to={`/admin/${admin.adminId}/dashboard`} />
+        <Redirect from="/admin" to={`/admin/${admin.adminId}/ld-bim`} />
       )}
     </Switch>
   );
