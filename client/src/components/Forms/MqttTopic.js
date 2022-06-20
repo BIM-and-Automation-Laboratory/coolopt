@@ -18,7 +18,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { useShadeInputBaseStyles } from "@mui-treasury/styles/inputBase/shade";
 import styles from "./styles";
-import SplitButton from "../DropdownButton/DropdownButton";
 import Toggle from "../Toggle/Toggle";
 import Upload from "../FileUpload/Upload";
 import StagedFileList from "../FileUpload/StagedFileList";
@@ -51,7 +50,9 @@ export default function MqttTopic(props) {
                 fontSize="15px"
                 color="#09beb8"
               />
-              <p style={{ fontSize: "12px", color: "grey" }}>Topics will be used for client subscriptions and publications</p>
+              <p style={{ fontSize: "12px", color: "grey" }}>
+                Topics will be used for client subscriptions and publications
+              </p>
             </Card>
           </Grid>
           <Grid style={{ marginBottom: "20px" }} container spacing={2}>

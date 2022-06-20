@@ -38,8 +38,9 @@ class MyAwesomeExtension extends Autodesk.Viewing.Extension {
     this._button = new Autodesk.Viewing.UI.Button("myAwesomeExtensionButton");
     this._button.onClick = (ev) => {
       this.viewer.search(
-        "Wall",
+        "Space",
         (walls) => {
+          console.log(walls);
           this.viewer.select(walls);
         },
         console.error

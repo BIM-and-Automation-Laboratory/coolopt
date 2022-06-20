@@ -28,7 +28,7 @@ import { WiCloudUp } from "react-icons/wi";
 import { IoIosFingerPrint } from "react-icons/io";
 import MqttTopic from "../../components/Forms/MqttTopic";
 import { useShadeInputBaseStyles } from "@mui-treasury/styles/inputBase/shade";
-import DropdownButton from "../../components/DropdownButton/DropdownButton";
+import SplitButton from "../../components/SplitButton/SplitButton";
 
 export default function IoTConfigPage(props) {
   const inputStyles = useShadeInputBaseStyles();
@@ -368,7 +368,7 @@ export default function IoTConfigPage(props) {
                 >
                   Choose a topic to subscribe and publish a test message
                 </label>
-                <DropdownButton
+                <SplitButton
                   id="difficulty"
                   options={props.difficultyOptions}
                   value={props.difficulty}

@@ -3,7 +3,7 @@ import Yasgui from "@triply/yasgui";
 import "@triply/yasgui/build/yasgui.min.css";
 import { Card } from "@material-ui/core";
 
-export default function Sparql() {
+export default function Sparql({ sparqlDataFn }) {
   useEffect(() => {
     const yasgui = new Yasgui(document.getElementById("yasgui"), {
       requestConfig: {
@@ -11,6 +11,9 @@ export default function Sparql() {
           "https://api.triplydb.com/datasets/KevinLuwembaMugumya/medical/services/medical/sparql",
       },
       copyEndpointOnNewTab: false,
+    });
+    yasgui.on("queryResponse", (_, data) => {
+      sparqlDataFn(data.yasr.results.json);
     });
     return () => {};
   }, []);
