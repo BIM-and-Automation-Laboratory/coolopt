@@ -13,14 +13,11 @@ export default function Sparql({ sparqlDataFn }) {
       copyEndpointOnNewTab: false,
     });
     yasgui.on("queryResponse", (_, data) => {
+      console.log(data.yasr.results.json);
       sparqlDataFn(data.yasr.results.json);
     });
     return () => {};
   }, []);
 
-  return (
-    <Card>
-      <div id="yasgui" />
-    </Card>
-  );
+  return <div style={{ background: "white" }} id="yasgui" />;
 }

@@ -6,12 +6,12 @@ import PublishIcon from "@material-ui/icons/Publish";
 const useStyles = makeStyles({
   root: {
     background: "#e9e9e9",
-    padding: "5px",
+    padding: "2px",
     marginTop: "10px",
   },
   styleWhileDragging: {
     textAlign: "center",
-    padding: "15px",
+    padding: "2px",
     fontSize: "12px",
     letterSpacing: "1px",
     border: "1px dotted orange",
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   defaultDropZoneStyle: {
     textAlign: "center",
     width: "100%",
-    padding: "15px",
+    padding: "2px",
     fontSize: "12px",
     letterSpacing: "1px",
     textTransform: "none",
@@ -51,7 +51,7 @@ function Upload(props) {
         </Button>
       ) : (
         <Button className={classes.defaultDropZoneStyle}>
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <p>Add file</p>
           <PublishIcon className={classes.uploadIcon} />
         </Button>
       )}

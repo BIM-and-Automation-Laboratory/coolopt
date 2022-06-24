@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import clsx from "clsx";
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -15,16 +16,206 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
+import { Handle, Position } from "react-flow-renderer";
+import { Button, Card, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import Upload from "../FileUpload/Upload";
+import StagedFileList from "../FileUpload/StagedFileList";
+
+const useStyles = makeStyles({
+  root: {
+    "&:hover": {
+      backgroundColor: "transparent",
+    },
+  },
+  icon: {
+    borderRadius: "50%",
+    width: 16,
+    height: 16,
+    boxShadow:
+      "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
+    backgroundColor: "#f5f8fa",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))",
+    "$root.Mui-focusVisible &": {
+      outline: "2px auto rgba(19,124,189,.6)",
+      outlineOffset: 2,
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#ebf1f5",
+    },
+    "input:disabled ~ &": {
+      boxShadow: "none",
+      background: "rgba(206,217,224,.5)",
+    },
+  },
+  checkedIcon: {
+    backgroundColor: "#137cbd",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))",
+    "&:before": {
+      display: "block",
+      width: 16,
+      height: 16,
+      backgroundImage: "radial-gradient(#fff,#fff 28%,transparent 32%)",
+      content: '""',
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#106ba3",
+    },
+  },
+  addFilesBtn: {
+    width: "120px",
+    padding: "2px",
+    margin: "10px 10px 10px 0px",
+    textTransform: "none",
+    background: "#ff5e00",
+    color: "white",
+    "&:hover": {
+      background: "#D34D00",
+    },
+  },
+  addFilesBtnLoading: {
+    width: "120px",
+    padding: "2px",
+    margin: "10px 10px 10px 0px",
+    textTransform: "none",
+    background: "grey",
+    color: "white",
+    "&:hover": {
+      background: "grey",
+    },
+  },
+});
 
 const onInit = (reactFlowInstance) =>
   console.log("flow loaded:", reactFlowInstance);
 
-export const Flow = ({ childFn }) => {
-  const [value, setValue] = React.useState("female");
+function ModelSelectorNode() {
+  const classes = useStyles();
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
+  const [value, setValue] = React.useState("Medical Facility");
+
+  const handleChange = useCallback((evt) => {
+    setValue(evt.target.value);
+    console.log(evt.target.value);
+  }, []);
+
+  const bimModelOptions = [
+    "Block F1 and F2",
+    "Block F3",
+    "Block F4",
+    "Block C",
+    "Block D",
+    "MEP-Simple",
+    "Medical Facility",
+  ];
+
+  return (
+    <Card style={{ padding: "10px 10px 0px 10px", border: "1px solid black" }}>
+      <Handle type="target" position={Position.Top} />
+      <FormControl component="fieldset">
+        <FormLabel
+          style={{ fontSize: "12px", color: "black" }}
+          component="legend"
+        >
+          Choose a model
+        </FormLabel>
+        <RadioGroup
+          aria-label="gender"
+          name="gender1"
+          value={value}
+          onChange={handleChange}
+          style={{ fontSize: "10px" }}
+        >
+          {bimModelOptions.map((option) => (
+            <FormControlLabel
+              style={{ margin: "2px" }}
+              value={option}
+              control={
+                <Radio
+                  checkedIcon={
+                    <span className={clsx(classes.icon, classes.checkedIcon)} />
+                  }
+                  icon={<span className={classes.icon} />}
+                />
+              }
+              label={
+                <Typography style={{ fontSize: "9px" }} color="textSecondary">
+                  {option}
+                </Typography>
+              }
+            />
+          ))}
+        </RadioGroup>
+      </FormControl>
+    </Card>
+  );
+}
+
+function CustomBimUploadNode({ data }) {
+  const classes = useStyles();
+  // states
+  const [files, setFiles] = useState([]);
+  const [uploadFileLoading, setUploadFileLoading] = useState(false);
+
+  const handleSubmitFiles = () => {
+    console.log("Submitted");
   };
+  // ############################################################################
+  // File handling (files to be uploaded)
+  // ############################################################################
+
+  // Adding a file to the list of files to be uploaded
+  const handleAddFilesToStage = (acceptedFiles) => {
+    setFiles((prevFiles) => {
+      return [...prevFiles, ...acceptedFiles];
+    });
+  };
+
+  // Handler for deleting a assignment file that has been staged(this fn is passed
+  // down as a prop to the assignment creator component)
+  const handleRemoveFileFromStage = (selectedFileIdx) => {
+    const filtered = files.filter((file, index) => index !== selectedFileIdx);
+    setFiles(filtered);
+  };
+  return (
+    <Card style={{ padding: "10px 10px 10px 10px" }}>
+      <p style={{ fontSize: "12px" }}>{data?.title}</p>
+      <Handle type="target" position={Position.Top} />
+      <Upload
+        maxSize="50000000"
+        accept=".xls"
+        handleAddFilesToStage={handleAddFilesToStage}
+      />
+      <StagedFileList
+        stagedFilesForUpload={files}
+        handleRemoveFileFromStage={handleRemoveFileFromStage}
+      />
+      {files.length > 0 && (
+        <Button
+          className={
+            uploadFileLoading ? classes.addFilesBtnLoading : classes.addFilesBtn
+          }
+          onClick={handleSubmitFiles}
+        >
+          Submit file
+        </Button>
+      )}
+      <Handle type="source" position={Position.Bottom} id="a" />
+    </Card>
+  );
+}
+
+export const Flow = ({ childFn }) => {
+  const nodeTypes = useMemo(
+    () => ({
+      modelSelector: ModelSelectorNode,
+      customBimUpload: CustomBimUploadNode,
+    }),
+    []
+  );
+
   const bimModelOptions = [
     { value: "Block F1 and F2", label: "Block F1 and F2" },
     { value: "Block F3", label: "Block F3" },
@@ -89,58 +280,16 @@ export const Flow = ({ childFn }) => {
     },
     {
       id: "2",
-
-      data: {
-        label: (
-          <>
-            Choose a <strong> model</strong>
-            {/* <SplitButton
-              id="bimModel"
-              options={bimModelOptions}
-              onChange={onChange}
-            /> */}
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Gender</FormLabel>
-              <RadioGroup
-                aria-label="gender"
-                name="gender1"
-                value={value}
-                onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="female"
-                  control={<Radio />}
-                  label="Female"
-                />
-                <FormControlLabel
-                  value="male"
-                  control={<Radio />}
-                  label="Male"
-                />
-                <FormControlLabel
-                  value="other"
-                  control={<Radio />}
-                  label="Other"
-                />
-                <FormControlLabel
-                  value="disabled"
-                  disabled
-                  control={<Radio />}
-                  label="(Disabled option)"
-                />
-              </RadioGroup>
-            </FormControl>
-          </>
-        ),
-      },
+      type: "modelSelector",
       position: { x: 100, y: 100 },
     },
     {
       id: "3",
+      type: "customBimUpload",
       data: {
-        label: (
+        title: (
           <>
-            This one has a <strong>custom style</strong>
+            Upload a <strong>custom BIM</strong>
           </>
         ),
       },
@@ -154,73 +303,117 @@ export const Flow = ({ childFn }) => {
     },
     {
       id: "4",
-      position: { x: 250, y: 200 },
+      position: { x: 300, y: 300 },
       data: {
-        label: "Another default node",
+        label: (
+          <>
+            <strong>COBie file</strong>
+          </>
+        ),
       },
     },
     {
       id: "5",
+      type: "customBimUpload",
       data: {
-        label: "Node id: 5",
+        title: (
+          <>
+            Upload a <strong>COBie</strong> file
+          </>
+        ),
       },
-      position: { x: 250, y: 325 },
+      position: { x: 540, y: 300 },
+      style: {
+        background: "#D6D5E6",
+        color: "#333",
+        border: "1px solid #222138",
+        width: 180,
+      },
     },
     {
       id: "6",
+      data: {
+        label: "Knowledge Representation Learning",
+      },
+      position: { x: 200, y: 420 },
+    },
+    {
+      id: "7",
+      data: {
+        label: (
+          <>
+            <strong>SPARQL</strong> Query Engine
+            <br />
+            (Query the BIM)
+          </>
+        ),
+      },
+      position: { x: 400, y: 420 },
+    },
+    {
+      id: "8",
       type: "output",
       data: {
         label: (
           <>
-            An <strong>output node</strong>
+            Trained <strong>KRL inference (recommendation ranking)</strong>{" "}
+            model
           </>
         ),
       },
-      position: { x: 100, y: 480 },
-    },
-    {
-      id: "7",
-      type: "output",
-      data: { label: "Another output node" },
-      position: { x: 400, y: 450 },
+      position: { x: 200, y: 550 },
     },
   ];
 
   const initialEdges = [
     { id: "e1-2", source: "1", target: "2", label: "Default BIMS" },
-    { id: "e1-3", source: "1", target: "3" },
+    { id: "e1-3", source: "1", target: "3", label: "Custom BIMS" },
     {
       id: "e3-4",
       source: "3",
       target: "4",
       animated: true,
-      label: "animated edge",
+      label: "COBie submitted",
     },
     {
-      id: "e4-5",
-      source: "4",
+      id: "e3-5",
+      source: "3",
       target: "5",
-      label: "edge with arrow head",
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-    },
-    {
-      id: "e5-6",
-      source: "5",
-      target: "6",
-      type: "smoothstep",
-      label: "smooth step edge",
-    },
-    {
-      id: "e5-7",
-      source: "5",
-      target: "7",
-      type: "step",
-      style: { stroke: "#f6ab6c" },
-      label: "a step edge",
       animated: true,
-      labelStyle: { fill: "#f6ab6c", fontWeight: 700 },
+      label: "COBie not submitted",
+    },
+    // {
+    //   id: "e4-5",
+    //   source: "4",
+    //   target: "5",
+    //   label: "edge with arrow head",
+    //   markerEnd: {
+    //     type: MarkerType.ArrowClosed,
+    //   },
+    // },
+    {
+      id: "e4-6",
+      source: "4",
+      target: "6",
+      animated: true,
+      label: "Send to KRL AI",
+    },
+    {
+      id: "e4-7",
+      source: "4",
+      target: "7",
+      animated: true,
+      label: "Send to Query Engine",
+    },
+    {
+      id: "e6-8",
+      source: "6",
+      target: "8",
+      type: "step",
+      style: { stroke: "red" },
+      label: "Training",
+      animated: true,
+      labelStyle: { fill: "red", fontWeight: 700 },
     },
   ];
 
@@ -229,36 +422,19 @@ export const Flow = ({ childFn }) => {
   const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
 
   return (
-    <>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onInit={onInit}
-        fitView
-        attributionPosition="top-right"
-      >
-        <MiniMap
-          nodeStrokeColor={(n) => {
-            if (n.style?.background) return n.style.background;
-            if (n.type === "input") return "#0041d0";
-            if (n.type === "output") return "#ff0072";
-            if (n.type === "default") return "#1a192b";
-
-            return "#eee";
-          }}
-          nodeColor={(n) => {
-            if (n.style?.background) return n.style.background;
-
-            return "#fff";
-          }}
-          nodeBorderRadius={2}
-        />
-        <Controls />
-        <Background color="white" gap={16} />
-      </ReactFlow>
-    </>
+    <ReactFlow
+      nodeTypes={nodeTypes}
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onInit={onInit}
+      fitView
+      attributionPosition="bottom-left"
+    >
+      <Controls />
+      <Background color="white" gap={16} />
+    </ReactFlow>
   );
 };
