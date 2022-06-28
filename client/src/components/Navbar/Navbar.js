@@ -13,6 +13,7 @@ import MenuOpenIcon from "@material-ui/icons/MenuOpen";
 import styles from "./navbarStyle";
 import { CgMenuGridO } from "react-icons/cg";
 import logo from "../../assets/img/CoolOptLogo.svg";
+import ChooseModels from "../ChooseModels/ChooseModels";
 
 const useStyles = makeStyles(styles);
 
@@ -46,6 +47,9 @@ export default function Navbar(props) {
           </IconButton>
         </Hidden>
         <div className={classes.flex}>{brand}</div>
+        <div style={{ width: "200px", marginTop: "10px" }}>
+          <ChooseModels />
+        </div>
         <Hidden mdUp implementation="css">
           <IconButton
             color="inherit"

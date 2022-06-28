@@ -45,7 +45,7 @@ export class PipelinePanel extends Autodesk.Viewing.UI.DockingPanel {
       this.reactNode = ReactDOM.render(
         <div
           style={{
-            height: "400px",
+            height: "800px",
             width: "600px",
             padding: "10px",
             color: "black",

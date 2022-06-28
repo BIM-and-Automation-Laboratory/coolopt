@@ -91,68 +91,6 @@ const useStyles = makeStyles({
 const onInit = (reactFlowInstance) =>
   console.log("flow loaded:", reactFlowInstance);
 
-function ModelSelectorNode() {
-  const classes = useStyles();
-
-  const [value, setValue] = React.useState("Medical Facility");
-
-  const handleChange = useCallback((evt) => {
-    setValue(evt.target.value);
-    console.log(evt.target.value);
-  }, []);
-
-  const bimModelOptions = [
-    "Block F1 and F2",
-    "Block F3",
-    "Block F4",
-    "Block C",
-    "Block D",
-    "MEP-Simple",
-    "Medical Facility",
-  ];
-
-  return (
-    <Card style={{ padding: "10px 10px 0px 10px", border: "1px solid black" }}>
-      <Handle type="target" position={Position.Top} />
-      <FormControl component="fieldset">
-        <FormLabel
-          style={{ fontSize: "12px", color: "black" }}
-          component="legend"
-        >
-          Choose a model
-        </FormLabel>
-        <RadioGroup
-          aria-label="gender"
-          name="gender1"
-          value={value}
-          onChange={handleChange}
-          style={{ fontSize: "10px" }}
-        >
-          {bimModelOptions.map((option) => (
-            <FormControlLabel
-              style={{ margin: "2px" }}
-              value={option}
-              control={
-                <Radio
-                  checkedIcon={
-                    <span className={clsx(classes.icon, classes.checkedIcon)} />
-                  }
-                  icon={<span className={classes.icon} />}
-                />
-              }
-              label={
-                <Typography style={{ fontSize: "9px" }} color="textSecondary">
-                  {option}
-                </Typography>
-              }
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
-    </Card>
-  );
-}
-
 function CustomBimUploadNode({ data }) {
   const classes = useStyles();
   // states
@@ -210,60 +148,10 @@ function CustomBimUploadNode({ data }) {
 export const Flow = ({ childFn }) => {
   const nodeTypes = useMemo(
     () => ({
-      modelSelector: ModelSelectorNode,
       customBimUpload: CustomBimUploadNode,
     }),
     []
   );
-
-  const bimModelOptions = [
-    { value: "Block F1 and F2", label: "Block F1 and F2" },
-    { value: "Block F3", label: "Block F3" },
-    { value: "Block F4", label: "Block F4" },
-    { value: "Block C", label: "Block C" },
-    { value: "Block D", label: "Block D" },
-    { value: "MEP-Simple", label: "MEP-Simple" },
-    { value: "Medical Facility", label: "Medical Facility" },
-  ];
-
-  const formik = useFormik({
-    initialValues: {
-      bimModel: "Medical Facility",
-    },
-  });
-
-  const onChange = (value) => {
-    formik.setFieldValue("bimModel", value.value);
-    if (value.value == "Block F1 and F2") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvQkxPQ0tfRjFfYW5kX0YyJTIwXyUyMEh1aV9MaW5nX0NPQmllLnJ2dA"
-      );
-    } else if (value.value == "Block F3") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvQmxvY2slMjBGM19DT2JpZV9IZW5yeS5ydnQ"
-      );
-    } else if (value.value == "Block F4") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvQmxvY2slMjBGNF9DT2JpZV9IZW5yeS4wMDAxLnJ2dA"
-      );
-    } else if (value.value == "Block C") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvQmxvY2tfQ19DT0JpZV9IdWlfTGluZy5ydnQ"
-      );
-    } else if (value.value == "Block D") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvQmxvY2slMjBEX0NPYmllX0hlbnJ5LnJ2dA"
-      );
-    } else if (value.value == "MEP-Simple") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvTUVQJTIwMiUyMEdyYXBoXzEucnZ0"
-      );
-    } else if (value.value == "Medical Facility") {
-      childFn(
-        "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cG9jX21vZGVsc19idWNrZXQvTWVkaWNhbF9GYWNpbGl0eV9BdXRvZGVza19DT2JpZS5ydnQ"
-      );
-    }
-  };
 
   const initialNodes = [
     {
@@ -280,11 +168,6 @@ export const Flow = ({ childFn }) => {
     },
     {
       id: "2",
-      type: "modelSelector",
-      position: { x: 100, y: 100 },
-    },
-    {
-      id: "3",
       type: "customBimUpload",
       data: {
         title: (
@@ -302,7 +185,7 @@ export const Flow = ({ childFn }) => {
       },
     },
     {
-      id: "4",
+      id: "3",
       position: { x: 300, y: 300 },
       data: {
         label: (
@@ -313,7 +196,7 @@ export const Flow = ({ childFn }) => {
       },
     },
     {
-      id: "5",
+      id: "4",
       type: "customBimUpload",
       data: {
         title: (
@@ -331,14 +214,14 @@ export const Flow = ({ childFn }) => {
       },
     },
     {
-      id: "6",
+      id: "5",
       data: {
         label: "Knowledge Representation Learning",
       },
       position: { x: 200, y: 420 },
     },
     {
-      id: "7",
+      id: "6",
       data: {
         label: (
           <>
@@ -351,7 +234,7 @@ export const Flow = ({ childFn }) => {
       position: { x: 400, y: 420 },
     },
     {
-      id: "8",
+      id: "7",
       type: "output",
       data: {
         label: (

@@ -12,6 +12,7 @@ import { GET_ADMINS } from "../../utils/graphql";
 import { useQuery } from "@apollo/client";
 import { v4 as uuidv4 } from "uuid";
 import CircleSpinner from "../../components/CircleSpinner/CircleSpinner";
+import BIMModelsPage from "../../pages/BIMModelsPage/BIMModelsPage";
 
 export default function Admin({ ...rest }) {
   const useStyles = makeStyles(styles);
@@ -41,6 +42,13 @@ export default function Admin({ ...rest }) {
 
   const switchRoutes = (
     <Switch>
+      {hasProfile && (
+        <Route
+          exact
+          path={`/admin/:ADMIN_ID/ld-bim/:MODEL_URN`}
+          component={BIMModelsPage}
+        />
+      )}
       {routes.map((prop) =>
         // if user has no profile, create only one route to get-started
         !hasProfile()

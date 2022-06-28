@@ -20,7 +20,13 @@ const customStyles = {
   }),
 };
 
-export default function SplitButton({ onChange, options, value, className }) {
+export default function SplitButton({
+  onChange,
+  options,
+  value,
+  className,
+  placeholder,
+}) {
   const defaultValue = (options, value) => {
     return options ? options.find((option) => option.value === value) : "";
   };
@@ -32,6 +38,7 @@ export default function SplitButton({ onChange, options, value, className }) {
         value={defaultValue(options, value)}
         onChange={(value) => onChange(value)}
         options={options}
+        placeholder={placeholder}
       />
     </div>
   );

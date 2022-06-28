@@ -141,7 +141,9 @@ async function startApolloServer() {
       // [OPTIONAL] CREATE PIPELINE CONFIG FOR THE CHANGE STREAM.
       // This will be a .pipeline function on watch
       // { fullDocument: 'updateLookup' } provides us the whole copy of the input data
-      const changeStream = await collection.watch({ fullDocument: "updateLookup" });
+      const changeStream = await collection.watch({
+        fullDocument: "updateLookup",
+      });
 
       const next = await changeStream.next();
 
@@ -149,10 +151,7 @@ async function startApolloServer() {
       const latestDataPointIdx = next.fullDocument.data.length - 1;
 
       // emit the latest data point to the client using socket.io
-      io.emit(
-        "mqtt-temp-hum-data",
-        next.fullDocument.data[latestDataPointIdx]
-      )
+      io.emit("mqtt-temp-hum-data", next.fullDocument.data[latestDataPointIdx]);
     });
 
     // MQTT CLIENT ERROR LOGIC IS CONNECTION TO HOST FAILS
@@ -309,9 +308,11 @@ async function startApolloServer() {
   app.use("/api/forge", ForgeAPI(config.forge));
   app.use("/api/dm", DMAPI());
   // forge auth
-  app.use("/api/forge/oauth", require("./api/endpoints/oauth"));
+  app.use("/api/forge/auth", require("./api/routes/auth"));
+  // forge auth
+  app.use("/api/forge/models", require("./api/routes/models"));
   // research lbd
-  app.use("/api/lbd", require("./api/endpoints/lbd"))
+  app.use("/api/lbd", require("./api/endpoints/lbd"));
 
   ///////////////////////////////////////////////////////////
   // Viewer GET Proxy

@@ -18,6 +18,22 @@ module.exports = function (app) {
   );
 
   app.use(
+    "/api/forge/models",
+    createProxyMiddleware({
+      target: "http://127.0.0.1:5000/",
+      changeOrigin: true,
+    })
+  );
+
+  app.use(
+    "/api/forge/auth",
+    createProxyMiddleware({
+      target: "http://127.0.0.1:5000/",
+      changeOrigin: true,
+    })
+  );
+
+  app.use(
     "/api/lbd/semantic-injection",
     createProxyMiddleware({
       target: "http://127.0.0.1:5001/",
