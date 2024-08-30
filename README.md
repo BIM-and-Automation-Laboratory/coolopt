@@ -2,6 +2,8 @@
 
 :warning: In development
 
+![CoolOpt 2](https://github.com/user-attachments/assets/30778f9e-37a6-48bb-9cf5-b79e8df59423)
+
 A web-based research prototype showcasing a combo of Linked Data + IoT + Data Interrogation + Knowledge Representation Learning.
 
 ## Development Stack
